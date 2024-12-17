@@ -19,7 +19,7 @@ This documentation is best viewed at [httpie.io/docs](https://httpie.org/docs).
 You can select your corresponding HTTPie version as well as run examples directly from the browser using a [termible.io](https://termible.io?utm_source=httpie-readme) embedded terminal.
 
 If you are reading this on GitHub, then this text covers the current *development* version.
-You are invited to submit fixes and improvements to the docs by editing [this file](https://github.com/httpie/httpie/blob/master/docs/README.md).
+You are invited to submit fixes and improvements to the docs by editing [this file](https://github.com/httpie/cli/blob/master/docs/README.md).
 
 </div>
 
@@ -126,6 +126,66 @@ $ choco upgrade httpie
 
 ### Linux
 
+#### Debian and Ubuntu
+
+Also works for other Debian-derived distributions like MX Linux, Linux Mint, deepin, Pop!_OS, KDE neon, Zorin OS, elementary OS, Kubuntu, Devuan, Linux Lite, Peppermint OS, Lubuntu, antiX, Xubuntu, etc.
+
+```bash
+# Install httpie
+$ curl -SsL https://packages.httpie.io/deb/KEY.gpg | sudo gpg --dearmor -o /usr/share/keyrings/httpie.gpg
+$ echo "deb [arch=amd64 signed-by=/usr/share/keyrings/httpie.gpg] https://packages.httpie.io/deb ./" | sudo tee /etc/apt/sources.list.d/httpie.list > /dev/null
+$ sudo apt update
+$ sudo apt install httpie
+```
+
+```bash
+# Upgrade httpie
+$ sudo apt update && sudo apt upgrade httpie
+```
+
+#### Fedora
+
+```bash
+# Install httpie
+$ dnf install httpie
+```
+
+```bash
+# Upgrade httpie
+$ dnf upgrade httpie
+```
+
+#### CentOS and RHEL
+
+Also works for other RHEL-derived distributions like ClearOS, Oracle Linux, etc.
+
+```bash
+# Install httpie
+$ yum install epel-release
+$ yum install httpie
+```
+
+```bash
+# Upgrade httpie
+$ yum upgrade httpie
+```
+
+#### Single binary executables
+
+Get the standalone HTTPie Linux executables when you don't want to go through the full installation process.
+
+```bash
+# Install httpie
+$ https --download packages.httpie.io/binaries/linux/http-latest -o http
+$ ln -ls ./http ./https
+$ chmod +x ./http ./https
+```
+
+```bash
+# Upgrade httpie
+$ https --download packages.httpie.io/binaries/linux/http-latest -o http
+```
+
 #### Snapcraft (Linux)
 
 To install [Snapcraft](https://snapcraft.io/), see [its installation](https://snapcraft.io/docs/installing-snapd).
@@ -156,51 +216,6 @@ $ brew update
 $ brew upgrade httpie
 ```
 
-#### Debian and Ubuntu
-
-Also works for other Debian-derived distributions like MX Linux, Linux Mint, deepin, Pop!_OS, KDE neon, Zorin OS, elementary OS, Kubuntu, Devuan, Linux Lite, Peppermint OS, Lubuntu, antiX, Xubuntu, etc.
-
-```bash
-# Install httpie
-$ curl -SsL https://packages.httpie.io/deb/KEY.gpg | apt-key add -
-$ curl -SsL -o /etc/apt/sources.list.d/httpie.list https://packages.httpie.io/deb/httpie.list
-$ apt update
-$ apt install httpie
-```
-
-```bash
-# Upgrade httpie
-$ apt update
-$ apt upgrade httpie
-```
-
-#### Fedora
-
-```bash
-# Install httpie
-$ dnf install httpie
-```
-
-```bash
-# Upgrade httpie
-$ dnf upgrade httpie
-```
-
-#### CentOS and RHEL
-
-Also works for other RHEL-derived distributions like ClearOS, Oracle Linux, etc.
-
-```bash
-# Install httpie
-$ yum install epel-release
-$ yum install httpie
-```
-
-```bash
-# Upgrade httpie
-$ yum upgrade httpie
-```
-
 #### Arch Linux
 
 Also works for other Arch-derived distributions like ArcoLinux, EndeavourOS, Artix Linux, etc.
@@ -213,21 +228,6 @@ $ pacman -Syu httpie
 ```bash
 # Upgrade httpie
 $ pacman -Syu
-```
-
-#### Single binary executables
-
-Get the standalone HTTPie Linux executables when you don't want to go through the full installation process
-
-```bash
-# Install httpie
-$ https --download packages.httpie.io/binaries/linux/http-latest -o http
-$ chmod +x ./http
-```
-
-```bash
-# Upgrade httpie
-$ https --download packages.httpie.io/binaries/linux/http-latest -o http
 ```
 
 ### FreeBSD
@@ -250,35 +250,38 @@ $ pkg upgrade www/py-httpie
 
 ### Unstable version
 
-You can also install the latest unreleased development version directly from the `master` branch on GitHub.
-It is a work-in-progress of a future stable release so the experience might be not as smooth.
+If you want to try out the latest version of HTTPie that hasn't been officially released yet, you can install the development or unstable version directly from the master branch on GitHub. However, keep in mind that the development version is a work in progress and may not be as reliable as the stable version.
 
-You can install it on Linux, macOS, Windows, or FreeBSD with `pip`:
+You can use the following command to install the development version of HTTPie on Linux, macOS, Windows, or FreeBSD operating systems. With this command, the code present in the `master` branch is downloaded and installed using `pip`.
 
 ```bash
-$ python -m pip install --upgrade https://github.com/httpie/httpie/archive/master.tar.gz
+$ python -m pip install --upgrade https://github.com/httpie/cli/archive/master.tar.gz
 ```
 
-Or on macOS, and Linux, with Homebrew:
+There are other ways to install the development version of HTTPie on macOS and Linux.
+
+You can install it using Homebrew by running the following commands:
 
 ```bash
 $ brew uninstall --force httpie
 $ brew install --HEAD httpie
 ```
 
-And even on macOS, and Linux, with Snapcraft:
+You can install it using Snapcraft by running the following commands:
 
 ```bash
 $ snap remove httpie
 $ snap install httpie --edge
 ```
 
-Verify that now you have the [current development version identifier](https://github.com/httpie/httpie/blob/master/httpie/__init__.py#L6) with the `.dev0` suffix, for example:
+To verify the installation, you can compare the [version identifier on GitHub](https://github.com/httpie/cli/blob/master/httpie/__init__.py#L6) with the one available on your machine. You can check the version of HTTPie on your machine by using the command `http --version`.
 
 ```bash
 $ http --version
 # 3.X.X.dev0
 ```
+
+Note that on your machine, the version name will have the `.dev0` suffix.
 
 ## Usage
 
@@ -322,10 +325,10 @@ Build and print a request without sending it using [offline mode](#offline-mode)
 $ http --offline pie.dev/post hello=offline
 ```
 
-Use [GitHub API](https://developer.github.com/v3/issues/comments/#create-a-comment) to post a comment on an [issue](https://github.com/httpie/httpie/issues/83) with [authentication](#authentication):
+Use [GitHub API](https://developer.github.com/v3/issues/comments/#create-a-comment) to post a comment on an [issue](https://github.com/httpie/cli/issues/83) with [authentication](#authentication):
 
 ```bash
-$ http -a USERNAME POST https://api.github.com/repos/httpie/httpie/issues/83/comments body='HTTPie is awesome! :heart:'
+$ http -a USERNAME POST https://api.github.com/repos/httpie/cli/issues/83/comments body='HTTPie is awesome! :heart:'
 ```
 
 Upload a file using [redirected input](#redirected-input):
@@ -474,7 +477,7 @@ $ http pie.dev/get text==@files/text.txt
 ### URL shortcuts for `localhost`
 
 Additionally, curl-like shorthand for localhost is supported.
-This means that, for example, `:3000` would expand to `http://localhost:3000`
+This means that, for example, `:3000` would expand to `http://localhost:3000`.
 If the port is omitted, then port 80 is assumed.
 
 ```bash
@@ -527,7 +530,7 @@ $ http-unix %2Fvar%2Frun%2Fdocker.sock/info
 
 ### `--path-as-is`
 
-The standard behavior of HTTP clients is to normalize the path portion of URLs by squashing dot segments as a typically filesystem would:
+The standard behavior of HTTP clients is to normalize the path portion of URLs by squashing dot segments as a typical filesystem would:
 
 ```bash
 $ http -v example.org/./../../etc/password
@@ -571,7 +574,7 @@ $ http PUT pie.dev/put \
 |                                    HTTP Headers `Name:Value` | Arbitrary HTTP header, e.g. `X-API-Token:123`                                                                                                                                                                          |
 |                                 URL parameters `name==value` | Appends the given name/value pair as a querystring parameter to the URL. The `==` separator is used.                                                                                                                   |
 |                                    Data Fields `field=value` | Request data fields to be serialized as a JSON object (default), to be form-encoded (with `--form, -f`), or to be serialized as `multipart/form-data` (with `--multipart`)                                             |
-|                                Raw JSON fields `field:=json` | Useful when sending JSON and one or more fields need to be a `Boolean`, `Number`, nested `Object`, or an `Array`, e.g., `meals:='["ham","spam"]'` or `pies:=[1,2,3]` (note the quotes)                                 |
+|                                Raw JSON fields `field:=json` | Useful when sending JSON and one or more fields need to be a `Boolean`, `Number`, nested `Object`, or an `Array`, e.g., `meals:='["ham","spam"]'` or `pies:='[1,2,3]'` (note the quotes)                                 |
 | File upload fields `field@/dir/file`, `field@file;type=mime` | Only available with `--form`, `-f` and `--multipart`. For example `screenshot@~/Pictures/img.png`, or `'cv@cv.txt;type=text/markdown'`. With `--form`, the presence of a file field results in a `--multipart` request |
 
 Note that the structured data fields aren’t the only way to specify request data:
@@ -580,7 +583,7 @@ Note that the structured data fields aren’t the only way to specify request da
 ### File based separators
 
 Using file contents as values for specific fields is a very common use case, which can be achieved through adding the `@` suffix to
-the operators above. For example instead of using a static string as the value for some header, you can use `:@` operator
+the operators above. For example, instead of using a static string as the value for some header, you can use `:@` operator
 to pass the desired value from a file.
 
 ```bash
@@ -746,7 +749,7 @@ $ http --offline --print=B pie.dev/post \
 
 In the example above, the `search[type]` is an instruction for creating an object called `search`, and setting the `type` field of it to the given value (`"id"`).
 
-Also note that, just as the regular syntax, you can use the `:=` operator to directly pass raw JSON values (e.g, numbers in the case above).
+Also note that, just as the regular syntax, you can use the `:=` operator to directly pass raw JSON values (e.g., numbers in the case above).
 
 ```json
 {
@@ -912,6 +915,8 @@ http --offline --print=B pie.dev/post \
 ]
 ```
 
+Sending scalar JSON types (a single `null`, `true`, `false`,  string or number) as the top-level object is impossible using the key/value syntax. But you can still pass it via [`--raw='<value>'`](#raw-request-body).
+
 ##### Escaping behavior
 
 Nested JSON syntax uses the same [escaping rules](#escaping-rules) as
@@ -1039,7 +1044,7 @@ $ http POST pie.dev/post < files/data.json
 ## Forms
 
 Submitting forms is very similar to sending [JSON](#json) requests.
-Often the only difference is in adding the `--form, -f` option, which ensures that data fields are serialized as, and `Content-Type` is set to `application/x-www-form-urlencoded; charset=utf-8`.
+Often the only difference is in adding the `--form, -f` option, which ensures that data fields are serialized as key-value tuples separated by '&', with a '=' between the key and the value. In addition `Content-Type` is set to `application/x-www-form-urlencoded; charset=utf-8`.
 It is possible to make form data the implicit content type instead of JSON via the [config](#config) file.
 
 ### Regular forms
@@ -1171,11 +1176,11 @@ User-Agent: HTTPie/<version>
 Host: <taken-from-URL>
 ```
 
-Any of these can be overwritten and some of them unset (see below).
+All of these can be overwritten or unset (see below).
 
 ### Reading headers from a file
 
-You can read headers from a file by using the `:@` operator. This would also effectively strip the newlines from the end. See [#file-based-separators] for more examples.
+You can read headers from a file by using the `:@` operator. This would also effectively strip the newlines from the end. See [file based separators](#file-based-separators) for more examples.
 
 ```bash
 $ http pie.dev/headers X-Data:@files/text.txt
@@ -1230,7 +1235,7 @@ by individual commands when sending a request instead of being joined together.
 
 ### Limiting response headers
 
-The `--max-headers=n` options allows you to control the number of headers HTTPie reads before giving up (the default `0`, i.e., there’s no limit).
+The `--max-headers=n` option allows you to control the number of headers HTTPie reads before giving up (the default `0`, i.e., there’s no limit).
 
 ```bash
 $ http --max-headers=100 pie.dev/get
@@ -1749,7 +1754,7 @@ $ http pie.dev/post <<<'{"name": "John"}'
 You can even pipe web services together using HTTPie:
 
 ```bash
-$ http GET https://api.github.com/repos/httpie/httpie | http POST pie.dev/post
+$ http GET https://api.github.com/repos/httpie/cli | http POST pie.dev/post
 ```
 
 You can use `cat` to enter multiline data on the terminal:
@@ -1997,7 +2002,7 @@ HTTPie features a download mode in which it acts similarly to `wget`.
 When enabled using the `--download, -d` flag, response headers are printed to the terminal (`stderr`), and a progress bar is shown while the response body is being saved to a file.
 
 ```bash
-$ http --download https://github.com/httpie/httpie/archive/master.tar.gz
+$ http --download https://github.com/httpie/cli/archive/master.tar.gz
 ```
 
 ```http
@@ -2026,7 +2031,7 @@ To prevent data loss by overwriting, HTTPie adds a unique numerical suffix to th
 You can also redirect the response body to another program while the response headers and progress are still shown in the terminal:
 
 ```bash
-$ http -d https://github.com/httpie/httpie/archive/master.tar.gz | tar zxf -
+$ http -d https://github.com/httpie/cli/archive/master.tar.gz | tar zxf -
 ```
 
 ### Resuming downloads
@@ -2308,7 +2313,7 @@ These flags are available for both `sessions upgrade` and `sessions upgrade-all`
 
 | Option           | Description                                                                                                                                                                   |
 |------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `--bind-cookies` | Bind all previously [unbound cookies](#host-based-cookie-policy) to the session’s host ([context](https://github.com/httpie/httpie/security/advisories/GHSA-9w4w-cpc8-h2fq)). |
+| `--bind-cookies` | Bind all previously [unbound cookies](#host-based-cookie-policy) to the session’s host ([context](https://github.com/httpie/cli/security/advisories/GHSA-9w4w-cpc8-h2fq)). |
 
 
 ## Config
@@ -2395,16 +2400,13 @@ fi
 The default behavior of automatically reading `stdin` is typically not desirable during non-interactive invocations.
 You most likely want to use the `--ignore-stdin` option to disable it.
 
-It is a common *gotcha* that without this option HTTPie seemingly hangs.
-What happens is that when HTTPie is invoked, for example, from a cron job, `stdin` is not connected to a terminal.
-Therefore, the rules for [redirected input](#redirected-input) apply, i.e. HTTPie starts to read it expecting that the request body will be passed through.
-And since there’s neither data nor `EOF`, it will get stuck. So unless you’re piping some data to HTTPie, the `--ignore-stdin` flag should be used in scripts.
+It's important to note that without the `--ignore-stdin` option, HTTPie may appear to have stopped working (hang). This happens because, in situations where HTTPie is invoked outside of an interactive session, such as from a cron job, `stdin` is not connected to a terminal. This means that the rules for [redirected input](#redirected-input) will be followed. When `stdin` is redirected, HTTPie assumes that the input will contain the request body, and it waits for the input to be provided. But, since there is neither any input data nor an end-of-file (`EOF`) signal, HTTPie gets stuck. To avoid this problem, the `--ignore-stdin` flag should be used in scripts, unless data is being piped to HTTPie.
 
-Also, it might be good to set a connection `--timeout` limit to prevent your program from hanging if the server never responds.
+To prevent your program from becoming unresponsive when the server fails to respond, it's a good idea to use the `--timeout` option to set a connection timeout limit.
 
 ## Plugin manager
 
-HTTPie offers extensibility through a [plugin API](https://github.com/httpie/httpie/blob/master/httpie/plugins/base.py),
+HTTPie offers extensibility through a [plugin API](https://github.com/httpie/cli/blob/master/httpie/plugins/base.py),
 and there are dozens of plugins available to try!
 They add things like new authentication methods ([akamai/httpie-edgegrid](https://github.com/akamai/httpie-edgegrid)),
 transport mechanisms ([httpie/httpie-unixsocket](https://github.com/httpie/httpie-unixsocket)),
@@ -2544,7 +2546,7 @@ All changes are recorded in the [change log](#change-log).
 
 HTTPie has the following community channels:
 
-- [GitHub Issues](https://github.com/httpie/httpie/issues) for bug reports and feature requests
+- [GitHub Issues](https://github.com/httpie/cli/issues) for bug reports and feature requests
 - [Discord server](https://httpie.io/discord) to ask questions, discuss features, and for general API development discussion
 - [StackOverflow](https://stackoverflow.com) to ask questions (make sure to use the [httpie](https://stackoverflow.com/questions/tagged/httpie) tag)
 
@@ -2566,7 +2568,7 @@ HTTPie plays exceptionally well with the following tools:
 
 Helpers to convert from other client tools:
 
-- [CurliPie](https://curlipie.now.sh/) help convert cURL command line to HTTPie command line
+- [CurliPie](https://curlipie.open-api.vn) — library to convert cURL commands to HTTPie
 
 #### Alternatives
 
@@ -2575,24 +2577,25 @@ Helpers to convert from other client tools:
 
 ### Contributing
 
-See [CONTRIBUTING](https://github.com/httpie/httpie/blob/master/CONTRIBUTING.md).
+See [CONTRIBUTING](https://github.com/httpie/cli/blob/master/CONTRIBUTING.md).
 
 ### Security policy
 
-See [github.com/httpie/httpie/security/policy](https://github.com/httpie/httpie/security/policy).
+See [github.com/httpie/cli/security/policy](https://github.com/httpie/cli/security/policy).
 
 ### Change log
 
-See [CHANGELOG](https://github.com/httpie/httpie/blob/master/CHANGELOG.md).
+See [CHANGELOG](https://github.com/httpie/cli/blob/master/CHANGELOG.md).
 
 ### Artwork
 
-- [README Animation](https://github.com/httpie/httpie/blob/master/docs/httpie-animation.gif) by [Allen Smith](https://github.com/loranallensmith).
+- [README Animation](https://github.com/httpie/cli/blob/master/docs/httpie-animation.gif) by [Allen Smith](https://github.com/loranallensmith).
 
 ### Licence
 
-BSD-3-Clause: [LICENSE](https://github.com/httpie/httpie/blob/master/LICENSE).
+BSD-3-Clause: [LICENSE](https://github.com/httpie/cli/blob/master/LICENSE).
 
 ### Authors
 
-[Jakub Roztocil](https://roztocil.co) ([@jakubroztocil](https://twitter.com/jakubroztocil)) created HTTPie and [these fine people](https://github.com/httpie/httpie/blob/master/AUTHORS.md) have contributed.
+[Jakub Roztocil](https://roztocil.co) ([@jakubroztocil](https://twitter.com/jakubroztocil)) created HTTPie and [these fine people](https://github.com/httpie/cli/blob/master/AUTHORS.md) have contributed.
+

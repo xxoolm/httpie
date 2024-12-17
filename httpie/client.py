@@ -10,12 +10,14 @@ from urllib.parse import urlparse, urlunparse
 import requests
 # noinspection PyPackageRequirements
 import urllib3
+from urllib3.util import SKIP_HEADER, SKIPPABLE_HEADERS
+
 from . import __version__
 from .adapters import HTTPieHTTPAdapter
-from .context import Environment
 from .cli.constants import HTTP_OPTIONS
-from .cli.nested_json import EMPTY_STRING
-from .cli.dicts import HTTPHeadersDict, NestedJSONArray
+from .cli.dicts import HTTPHeadersDict
+from .cli.nested_json import unwrap_top_level_list_if_needed
+from .context import Environment
 from .encoding import UTF8
 from .models import RequestsMessage
 from .plugins.registry import plugin_manager
@@ -141,7 +143,7 @@ def collect_messages(
 # noinspection PyProtectedMember
 @contextmanager
 def max_headers(limit):
-    # <https://github.com/httpie/httpie/issues/802>
+    # <https://github.com/httpie/cli/issues/802>
     # noinspection PyUnresolvedReferences
     orig = http.client._MAXHEADERS
     http.client._MAXHEADERS = limit or float('Inf')
@@ -197,8 +199,12 @@ def finalize_headers(headers: HTTPHeadersDict) -> HTTPHeadersDict:
             # Also, requests raises `InvalidHeader` for leading spaces.
             value = value.strip()
             if isinstance(value, str):
-                # See <https://github.com/httpie/httpie/issues/212>
+                # See <https://github.com/httpie/cli/issues/212>
                 value = value.encode()
+        elif name.lower() in SKIPPABLE_HEADERS:
+            # Some headers get overwritten by urllib3 when set to `None`
+            # and should be replaced with the `SKIP_HEADER` constant.
+            value = SKIP_HEADER
         final_headers.add(name, value)
     return final_headers
 
@@ -306,21 +312,13 @@ def make_send_kwargs_mergeable_from_env(args: argparse.Namespace) -> dict:
 
 
 def json_dict_to_request_body(data: Dict[str, Any]) -> str:
-    # Propagate the top-level list if there is only one
-    # item in the object, with an en empty key.
-    if len(data) == 1:
-        [(key, value)] = data.items()
-        if isinstance(value, NestedJSONArray):
-            assert key == EMPTY_STRING
-            data = value
-
+    data = unwrap_top_level_list_if_needed(data)
     if data:
         data = json.dumps(data)
     else:
         # We need to set data to an empty string to prevent requests
         # from assigning an empty list to `response.request.data`.
         data = ''
-
     return data
 
 
@@ -383,7 +381,7 @@ def ensure_path_as_is(orig_url: str, prepped_url: str) -> str:
     untouched because other (welcome) processing on the URL might have
     taken place.
 
-    <https://github.com/httpie/httpie/issues/895>
+    <https://github.com/httpie/cli/issues/895>
 
 
     <https://ec.haxx.se/http/http-basics#path-as-is>

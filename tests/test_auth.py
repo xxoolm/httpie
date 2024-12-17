@@ -42,7 +42,7 @@ def test_bearer_auth(httpbin_both, token):
             new=lambda self, prompt: 'password')
 def test_password_prompt(httpbin):
     r = http('--auth', 'user',
-             'GET', httpbin.url + '/basic-auth/user/password')
+             'GET', httpbin + '/basic-auth/user/password')
     assert HTTP_OK in r
     assert r.json == {'authenticated': True, 'user': 'user'}
 
@@ -71,7 +71,7 @@ def test_credentials_in_url_auth_flag_has_priority(httpbin_both):
 ])
 def test_only_username_in_url(url):
     """
-    https://github.com/httpie/httpie/issues/242
+    https://github.com/httpie/cli/issues/242
 
     """
     args = httpie.cli.definition.parser.parse_args(args=[url], env=MockEnvironment())

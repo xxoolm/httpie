@@ -8,11 +8,11 @@ from .utils import HTTP_OK, MockEnvironment, http
 
 def test_Host_header_overwrite(httpbin):
     """
-    https://github.com/httpie/httpie/issues/235
+    https://github.com/httpie/cli/issues/235
 
     """
     host = 'pie.dev'
-    url = httpbin.url + '/get'
+    url = httpbin + '/get'
     r = http('--print=hH', url, f'host:{host}')
     assert HTTP_OK in r
     assert r.lower().count('host:') == 1
@@ -22,7 +22,7 @@ def test_Host_header_overwrite(httpbin):
 @pytest.mark.skipif(is_windows, reason='Unix-only')
 def test_output_devnull(httpbin):
     """
-    https://github.com/httpie/httpie/issues/252
+    https://github.com/httpie/cli/issues/252
 
     """
     http('--output=/dev/null', httpbin + '/get')
@@ -31,11 +31,11 @@ def test_output_devnull(httpbin):
 def test_verbose_redirected_stdout_separator(httpbin):
     """
 
-    <https://github.com/httpie/httpie/issues/1006>
+    <https://github.com/httpie/cli/issues/1006>
     """
     r = http(
         '-v',
-        httpbin.url + '/post',
+        httpbin + '/post',
         'a=b',
         env=MockEnvironment(stdout_isatty=False),
     )

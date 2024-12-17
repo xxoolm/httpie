@@ -1,15 +1,16 @@
 import ssl
 from typing import NamedTuple, Optional
 
-from httpie.adapters import HTTPAdapter
 # noinspection PyPackageRequirements
 from urllib3.util.ssl_ import (
-    DEFAULT_CIPHERS, create_urllib3_context,
+    create_urllib3_context,
     resolve_ssl_version,
 )
 
+from .adapters import HTTPAdapter
+from .compat import ensure_default_certs_loaded
 
-DEFAULT_SSL_CIPHERS = DEFAULT_CIPHERS
+
 SSL_VERSION_ARG_MAPPING = {
     'ssl2.3': 'PROTOCOL_SSLv23',
     'ssl3': 'PROTOCOL_SSLv3',
@@ -33,7 +34,7 @@ class HTTPieCertificate(NamedTuple):
     def to_raw_cert(self):
         """Synthesize a requests-compatible (2-item tuple of cert and key file)
         object from HTTPie's internal representation of a certificate."""
-        return (self.cert_file, self.key_file)
+        return self.cert_file, self.key_file
 
 
 class HTTPieHTTPSAdapter(HTTPAdapter):
@@ -72,7 +73,7 @@ class HTTPieHTTPSAdapter(HTTPAdapter):
         ssl_version: str = None,
         ciphers: str = None,
     ) -> 'ssl.SSLContext':
-        return create_urllib3_context(
+        ssl_context = create_urllib3_context(
             ciphers=ciphers,
             ssl_version=resolve_ssl_version(ssl_version),
             # Since we are using a custom SSL context, we need to pass this
@@ -80,6 +81,12 @@ class HTTPieHTTPSAdapter(HTTPAdapter):
             # in `super().cert_verify()`.
             cert_reqs=ssl.CERT_REQUIRED if verify else ssl.CERT_NONE
         )
+        ensure_default_certs_loaded(ssl_context)
+        return ssl_context
+
+    @classmethod
+    def get_default_ciphers_names(cls):
+        return [cipher['name'] for cipher in cls._create_ssl_context(verify=False).get_ciphers()]
 
 
 def _is_key_file_encrypted(key_file):
@@ -94,3 +101,9 @@ def _is_key_file_encrypted(key_file):
                 return True
 
     return False
+
+
+# We used to import the default set of TLS ciphers from urllib3, but they removed it.
+# Instead, now urllib3 uses the list of ciphers configured by the system.
+# <https://github.com/httpie/cli/pull/1501>
+DEFAULT_SSL_CIPHERS_STRING = ':'.join(HTTPieHTTPSAdapter.get_default_ciphers_names())

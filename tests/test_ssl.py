@@ -7,7 +7,7 @@ import urllib3
 
 from unittest import mock
 
-from httpie.ssl_ import AVAILABLE_SSL_VERSION_ARG_MAPPING, DEFAULT_SSL_CIPHERS
+from httpie.ssl_ import AVAILABLE_SSL_VERSION_ARG_MAPPING, DEFAULT_SSL_CIPHERS_STRING
 from httpie.status import ExitStatus
 
 from .utils import HTTP_OK, TESTS_ROOT, IS_PYOPENSSL, http
@@ -15,7 +15,7 @@ from .utils import HTTP_OK, TESTS_ROOT, IS_PYOPENSSL, http
 
 try:
     # Handle OpenSSL errors, if installed.
-    # See <https://github.com/httpie/httpie/issues/729>
+    # See <https://github.com/httpie/cli/issues/729>
     # noinspection PyUnresolvedReferences
     import OpenSSL.SSL
     ssl_errors = (
@@ -146,7 +146,7 @@ def test_ciphers(httpbin_secure):
     r = http(
         httpbin_secure.url + '/get',
         '--ciphers',
-        DEFAULT_SSL_CIPHERS,
+        DEFAULT_SSL_CIPHERS_STRING,
     )
     assert HTTP_OK in r
 

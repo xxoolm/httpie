@@ -36,7 +36,7 @@ def test_debug():
 def test_help():
     r = http('--help', tolerate_error_exit_status=True)
     assert r.exit_status == ExitStatus.SUCCESS
-    assert 'https://github.com/httpie/httpie/issues' in r
+    assert 'https://github.com/httpie/cli/issues' in r
 
 
 def test_version():
@@ -124,7 +124,7 @@ def test_POST_file(httpbin_both):
 
 def test_form_POST_file_redirected_stdin(httpbin):
     """
-    <https://github.com/httpie/httpie/issues/840>
+    <https://github.com/httpie/cli/issues/840>
 
     """
     with open(FILE_PATH, encoding=UTF8):
@@ -194,6 +194,14 @@ def test_unset_host_header(httpbin_both):
 
     r = http('GET', httpbin_both + '/headers', 'Host:')
     assert 'Host' not in r.json['headers']  # default Host unset
+
+
+def test_unset_useragent_header(httpbin_both):
+    r = http('GET', httpbin_both + '/headers')
+    assert 'User-Agent' in r.json['headers']  # default User-Agent present
+
+    r = http('GET', httpbin_both + '/headers', 'User-Agent:')
+    assert 'User-Agent' not in r.json['headers']  # default User-Agent unset
 
 
 def test_headers_empty_value(httpbin_both):

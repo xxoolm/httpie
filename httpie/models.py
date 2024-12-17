@@ -1,6 +1,7 @@
 from time import monotonic
 
 import requests
+from urllib3.util import SKIP_HEADER, SKIPPABLE_HEADERS
 
 from enum import Enum, auto
 from typing import Iterable, Union, NamedTuple
@@ -15,7 +16,6 @@ from .cli.constants import (
 )
 from .compat import cached_property
 from .utils import split_cookies, parse_content_type_header
-
 
 ELAPSED_TIME_LABEL = 'Elapsed time'
 
@@ -67,27 +67,10 @@ class HTTPResponse(HTTPMessage):
     def iter_lines(self, chunk_size):
         return ((line, b'\n') for line in self._orig.iter_lines(chunk_size))
 
-    # noinspection PyProtectedMember
     @property
     def headers(self):
-        try:
-            raw = self._orig.raw
-            if getattr(raw, '_original_response', None):
-                raw_version = raw._original_response.version
-            else:
-                raw_version = raw.version
-        except AttributeError:
-            # Assume HTTP/1.1
-            raw_version = 11
-        version = {
-            9: '0.9',
-            10: '1.0',
-            11: '1.1',
-            20: '2.0',
-        }[raw_version]
-
         original = self._orig
-        status_line = f'HTTP/{version} {original.status_code} {original.reason}'
+        status_line = f'HTTP/{self.version} {original.status_code} {original.reason}'
         headers = [status_line]
         headers.extend(
             ': '.join(header)
@@ -117,6 +100,32 @@ class HTTPResponse(HTTPMessage):
             for key, value in data.items()
         )
 
+    @property
+    def version(self) -> str:
+        """
+        Return the HTTP version used by the server, e.g. '1.1'.
+
+        Assume HTTP/1.1 if version is not available.
+
+        """
+        mapping = {
+            9: '0.9',
+            10: '1.0',
+            11: '1.1',
+            20: '2.0',
+        }
+        fallback = 11
+        version = None
+        try:
+            raw = self._orig.raw
+            if getattr(raw, '_original_response', None):
+                version = raw._original_response.version
+            else:
+                version = raw.version
+        except AttributeError:
+            pass
+        return mapping[version or fallback]
+
 
 class HTTPRequest(HTTPMessage):
     """A :class:`requests.models.Request` wrapper."""
@@ -144,6 +153,7 @@ class HTTPRequest(HTTPMessage):
         headers = [
             f'{name}: {value if isinstance(value, str) else value.decode()}'
             for name, value in headers.items()
+            if not (name.lower() in SKIPPABLE_HEADERS and value == SKIP_HEADER)
         ]
 
         headers.insert(0, request_line)

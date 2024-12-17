@@ -34,7 +34,7 @@ default: list-tasks
 list-tasks:
 	@echo Available tasks:
 	@echo ----------------
-	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | egrep -v -e '^[^[:alnum:]]' -e '^$@$$'
+	@$(MAKE) -pRrq -f $(lastword $(MAKEFILE_LIST)) : 2>/dev/null | awk -v RS= -F: '/^# File/,/^# Finished Make data base/ {if ($$1 !~ "^[#.]") {print $$1}}' | sort | grep -E -v -e '^[^[:alnum:]]' -e '^$@$$'
 	@echo
 
 
@@ -124,7 +124,8 @@ test-dist: test-sdist test-bdist-wheel
 
 test-sdist: clean venv
 	@echo $(H1)Testing sdist build an installation$(H1END)
-	$(VENV_PYTHON) setup.py sdist
+	$(VENV_PIP) install build
+	$(VENV_PYTHON) -m build --sdist
 	$(VENV_PIP) install --force-reinstall --upgrade dist/*.gz
 	$(VENV_BIN)/http --version
 	@echo
@@ -132,8 +133,8 @@ test-sdist: clean venv
 
 test-bdist-wheel: clean venv
 	@echo $(H1)Testing wheel build an installation$(H1END)
-	$(VENV_PIP) install wheel
-	$(VENV_PYTHON) setup.py bdist_wheel
+	$(VENV_PIP) install build
+	$(VENV_PYTHON) -m build --wheel
 	$(VENV_PIP) install --force-reinstall --upgrade dist/*.whl
 	$(VENV_BIN)/http --version
 	@echo
@@ -231,15 +232,15 @@ brew-test:
 	brew audit --strict httpie
 
 ###############################################################################
-# Regeneration
+# Generated content
 ###############################################################################
 
-regen-all: regen-man-pages regen-install-methods
+content: man installation-docs
 
-regen-man-pages: install
+man: install
 	@echo $(H1)Regenerate man pages$(H1END)
 	$(VENV_PYTHON) extras/scripts/generate_man_pages.py
 
-regen-install-methods:
+installation-docs:
 	@echo $(H1)Updating installation instructions in the docs$(H1END)
 	$(VENV_PYTHON) docs/installation/generate.py
